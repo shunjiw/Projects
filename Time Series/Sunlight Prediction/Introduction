@@ -1,2 +1,5 @@
 The goal of this project is to fit the sunlight data using an appropriate time series model and make predictions for the future.
 
+First, explore the data. 
+Secondly, fit the candidate time series models.
+Finally, assess model performance by MSE.
