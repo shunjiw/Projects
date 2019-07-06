@@ -1,0 +1,16 @@
+This project is to build a binary classifer to detect whether a transaction is fraudlent using machine learning techniques. 
+
+The biggest challenge is that the dataset is extremely imbalanced. 
+To deal with the imbalanced data, I proposed two approaches:
+1. Oversample the data with SMOTE algorithm and then use Logistic Regression, SVM and Random Forest to train the oversampled data.
+2. Utilize the Weighted Random Forest and Weighted SVM on the original training set.
+
+Besides, Logistic Regression, SVM and Random Forest are implemented directly on the original train set as the baseline method.
+The model performance will be evaluated by ROC-AUC.
+We will compare the models to determine which method fits the data best.
+
+The project is mainly divided into four tasks:
+1. Exploratory Data Analysis
+2. Oversampling with SMOTE
+3. Modeling 
+4. Comparison and Conclusion
