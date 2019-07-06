@@ -11,4 +11,5 @@ Steps:
 4. Assess model performance on the test set by MSE and decide the final model.
 
 
-Alternatively, try tree-based Random Forest model to build the predictive model by taking the variables such as temperature and cloud type as the predictors and the GHI value as the response.
+Alternatively, try tree-based Random Forest model to build the predictive model 
+by taking the variables such as temperature and cloud type as the predictors and the GHI value as the response.
