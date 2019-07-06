@@ -1,0 +1,177 @@
+---
+title: "Sunlight Prediction"
+author: "Shunji Wei"
+date: "2019/6/1"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Read Data
+```{r, eval = FALSE}
+### Read the daily GHI data in the five years that has been preprocessed in Python 
+dt = read.csv("data.csv", header = F)
+names(dt) = "GHI"
+```
+
+## Explore Data
+```{r, eval = FALSE}
+### Explore the data
+
+## Look at the original time series data
+ghi_ts = ts(dt$GHI, frequency = 365)
+plot(ghi_ts) # non-stationary; annual seasonality, indicating seasonal period = 365. 
+# Then, consider using Seasonal ARIMA model to fit the data. 
+# (SARIMA(p, d, q) x (P, D, Q)[s])
+
+# Both ACF plot and L-Box test show that there are strong correlations between GHI at different lags. 
+acf(ghi_ts)
+Box.test(ghi_ts, lag = 10, type = "Ljung")
+
+## Transform and difference the data to make it look stationary
+# First, take square root 
+sqrt_ghi_ts = sqrt(ghi_ts)
+plot(sqrt_ghi_ts) # still annual seasonality
+acf(sqrt_ghi_ts)
+Box.test(sqrt_ghi_ts, lag = 10, type = "Ljung")
+
+# No yearly trend, indicating d can be 0
+mean(sqrt_ghi_ts[1:365]) 
+mean(sqrt_ghi_ts[366:730])
+mean(sqrt_ghi_ts[731:1095]) 
+mean(sqrt_ghi_ts[1096:1460])
+mean(sqrt_ghi_ts[1461:1825]) 
+
+## Secondly, try differencing the transformed data.
+diff01 = diff(sqrt_ghi_ts, lag = 365) 
+diff02 = diff(diff(sqrt_ghi_ts, lag = 365), 365)
+diff11 = diff(diff(sqrt_ghi_ts, lag = 365))
+
+plot(diff01) # d = 0, D = 1 -- almost look stationary
+plot(diff02) # d = 0, D = 2
+plot(diff11) # d = 1, D = 1
+
+# Generate ACF and PACF plots for finding possible parameters
+acf(diff01)
+pacf(diff01)
+
+acf(diff02)
+pacf(diff02)
+
+acf(diff11)
+pacf(diff11)
+```
+
+## Modeling Part
+```{r, eval = FALSE}
+### Modeling
+
+## Use the function to find the suitable model automatically. 
+library(forecast)
+auto.arima(sqrt_ghi_ts, seasonal = T, allowdrift = F) # (1, 0, 0) x (0, 1, 0)[365]
+
+# Determine the candidate models: 
+# (1, 0, 0) x (0, 1, 0)[365], (1, 0, 1) x (0, 1, 0)[365], (0, 0, 1) x (0, 1, 0)[365]
+
+## Model selection by Cross Validation (Evaluation Metric: MSE)
+# split training and test set (7:3)
+split_point = floor(length(sqrt_ghi_ts)*0.7)
+train = sqrt_ghi_ts[1:split_point]
+test = sqrt_ghi_ts[(1+split_point):length(sqrt_ghi_ts)]
+
+cv_cuts = c(912, 912+73, 912+73*2, 912+73*3, 912+73*4)
+# split folds for cross validation 
+# length(sqrt_ghi_ts)*0.5 = 912.5, length(sqrt_ghi_ts)*0.04 = 73
+
+# Create a function to compute MSE for a bulit model
+compute_mse = function(pdq, PDQ, s = 365, data = train, ind){
+  mdl = arima(data[1:ind], order = pdq, seasonal = list(order = PDQ, period = s))
+  preds = predict(mdl, (length(data) - ind))$pred
+  mse = mean((data[(ind+1):length(data)]- preds)^2)
+  return(mse)
+}
+```
+
+```{r, eval = FALSE}
+# Compute the Cross-Validated MSE for all candidate models
+
+# (1, 0, 0)x(0, 1, 0)[365]
+mse_100_010 = c()
+for(i in 1:5){
+  mse_100_010[i] = compute_mse(c(1, 0, 0), PDQ = c(0, 1, 0), ind = cv_cuts[i])
+}
+mse_100_010 = mean(mse_100_010)
+
+# (1, 0, 1)x(0, 1, 0)[365]
+mse_101_010 = c()
+for(i in 1:5){
+  mse_101_010[i] = compute_mse(c(1, 0, 1), PDQ = c(0, 1, 0), ind = cv_cuts[i])
+}
+mse_101_010 = mean(mse_101_010)
+
+# (0, 0, 1)x(0, 1, 0)[365]
+mse_001_010 = c()
+for(i in 1:5){
+  mse_001_010[i] = compute_mse(c(0, 0, 1), PDQ = c(0, 1, 0), ind = cv_cuts[i])
+}
+mse_001_010 = mean(mse_001_010)
+```
+
+```{r, eval = FALSE}
+# Compute the MSE on the test set and the AICs for all candidate models 
+
+# (1, 0, 0)x(0, 1, 0)[365]
+fit_100_010 = arima(train, order = c(1, 0, 0), seasonal = list(order = c(0, 1, 0), period = 365))
+pred_100_010 = predict(fit_100_010, length(test))$pred
+tmse_100_010 = mean((test - pred_100_010)^2)
+aic_100_010 = fit_100_010$aic
+
+# (1, 0, 1)x(0, 1, 0)[365]
+fit_101_010 = arima(train, order = c(1, 0, 1), seasonal = list(order = c(0, 1, 0), period = 365))
+pred_101_010 = predict(fit_101_010, length(test))$pred
+tmse_101_010 = mean((test - pred_101_010)^2)
+aic_101_010 = fit_101_010$aic
+
+# (0, 0, 1)x(0, 1, 0)[365]
+fit_001_010 = arima(train, order = c(0, 0, 1), seasonal = list(order = c(0, 1, 0), period = 365))
+pred_001_010 = predict(fit_001_010, length(test))$pred
+tmse_001_010 = mean((test - pred_001_010)^2)
+aic_001_010 = fit_001_010$aic
+```
+
+## Model Comparison
+```{r, eval = FALSE}
+## Comparisons among the canduidate models
+
+# Model Performance (MSE)
+all_mse = data.frame(cv = c(mse_100_010, mse_101_010, mse_001_010), 
+                     AIC = c(aic_100_010, aic_101_010, aic_001_010), 
+                     test = c(tmse_100_010, tmse_101_010, tmse_001_010))
+rownames(all_mse) = c("(1,0,0)x(0,1,0)[365]", "(1,0,1)x(0,1,0)[365]", "(0,0,1)x(0,1,0)[365]")
+all_mse
+
+# Diagnostics
+tsdiag(fit_100_010)
+# summary(fit_100_010)
+
+tsdiag(fit_101_010)
+# summary(fit_101_010)
+
+tsdiag(fit_001_010)
+# summary(fit_001_010)
+```
+
+## Results:
+
+There is no significant pattern in the residual plots so that we could say the residuals of each candicate model seems to look like White Noise.
+
+The ACF Plots are used to detect whether there are some significant auto-correlations between lags and the L-jung Box tests provide p-value to mathematically measure the significance of the auto-correlations. 
+
+The p-values for Ljung-Box tests in the third model SARIMA(0, 0, 1) x (0, 1, 0)[365] are smaller and closer to 0 compared to those of the first two models, which might indicate that the performance of the third model is worse than the first two.
+
+In terms of the MSE (the chosen eval metric), the cross-validated and test MSEs for all candidate models are pretty close. The third model SARIMA(0, 0, 1) x (0, 1, 0)[365] has the lowest CV MSE and the first model SARIMA(1, 0, 0) x (0, 1, 0)[365] has the biggest CV MSE.
+
+Combining the MSE results with the diagnostics, I would suggest the model SARIMA(1, 0, 1) x (0, 1, 0)[365] as the final model. 
+
+It might not the best model. There are other combinations of parameters for SARIMA model could be tried, like (1, 1, 0) x (0, 1, 0)[365] and (1, 0, 1)x(0, 2, 0)[365]. Also, in addition to the time series model, some other methods could be used to fit the data, like regressing the GHI on the related features and using boosting methods.
+
