@@ -8,14 +8,14 @@ output:
 ---
 
 ## Read Data
-```{r, eval = FALSE}
+```{r}
 ### Read the daily GHI data in the five years that has been preprocessed in Python 
 dt = read.csv("data.csv", header = F)
 names(dt) = "GHI"
 ```
 
 ## Explore Data
-```{r, eval = FALSE}
+```{r}
 ### Explore the data
 
 ## Look at the original time series data
@@ -63,7 +63,7 @@ pacf(diff11)
 ```
 
 ## Modeling Part
-```{r, eval = FALSE}
+```{r}
 ### Modeling
 
 ## Use the function to find the suitable model automatically. 
@@ -92,7 +92,7 @@ compute_mse = function(pdq, PDQ, s = 365, data = train, ind){
 }
 ```
 
-```{r, eval = FALSE}
+```{r}
 # Compute the Cross-Validated MSE for all candidate models
 
 # (1, 0, 0)x(0, 1, 0)[365]
@@ -117,7 +117,7 @@ for(i in 1:5){
 mse_001_010 = mean(mse_001_010)
 ```
 
-```{r, eval = FALSE}
+```{r}
 # Compute the MSE on the test set and the AICs for all candidate models 
 
 # (1, 0, 0)x(0, 1, 0)[365]
@@ -140,7 +140,7 @@ aic_001_010 = fit_001_010$aic
 ```
 
 ## Model Comparison
-```{r, eval = FALSE}
+```{r}
 ## Comparisons among the canduidate models
 
 # Model Performance (MSE)
