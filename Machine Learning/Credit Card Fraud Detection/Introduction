@@ -1,6 +1,15 @@
 This project is to build a binary classifer to detect whether a transaction is fraudlent using machine learning techniques. 
 
-The biggest challenge is that the dataset is extremely imbalanced. 
+The dataset contains two-day transactions made by credit cards by European cardholders in September 2013. 
+There are 284,807 transactions in total and there are 31 variables.
+The response variable, Class: whether the transaction is fraudulent or not 
+The predictors: Transaction Amount, Transaction Time and 28 Principal Components. 
+
+The dataset is extremely imbalanced. 
+Only 482 out of 284,807 transactions are fraudulent, which means the fraud rate is about 0.17%. 
+The imbalanced data may cause the skewness of models toward the majority class. 
+This is the challenge we need to solve in this project.  
+
 To deal with the imbalanced data, I proposed two approaches:
 1. Oversample the data with SMOTE algorithm and then use Logistic Regression, SVM and Random Forest to train the oversampled data.
 2. Utilize the Weighted Random Forest and Weighted SVM on the original training set.
