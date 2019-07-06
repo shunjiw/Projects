@@ -1,5 +1,14 @@
 The goal of this project is to fit the sunlight data using an appropriate time series model and make predictions for the future.
 
-First, explore the data. 
-Secondly, fit the candidate time series models.
-Finally, assess model performance by MSE.
+Steps:
+
+1. Conduct the time series data analysis. Explore the trend and seasonality by data visualizations. 
+
+2. Difference the data and generate the ACF and PACF plots to find the potentially appropriate models. 
+
+3. Fit the candidate time series models on the train set and conduct model selection by Cross Validation.
+
+4. Assess model performance on the test set by MSE and decide the final model.
+
+
+Alternatively, try tree-based Random Forest model to build the predictive model by taking the variables such as temperature and cloud type as the predictors and the GHI value as the response.
