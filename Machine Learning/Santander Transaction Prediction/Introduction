@@ -1,1 +1,18 @@
-shshsh
+Santander Consumer Transaction Prediction is a Kaggle Competition project. 
+The goal is to identify which customers will make a specific transaction in the future, irrespective of the amount of money transacted. 
+
+The data provided has the same structure as the real data Santander have available to solve this problem. 
+The data has already been spilt into training and test set. 
+The training set has 200,000 rows and 202 columns, 
+which include 200 variables containing numeric feature variables, the binary target variable, and a string ID_code column.
+The test set has 200,000 rows as well and has 201 columns, 
+which include the same variables as the training set expect the target.
+
+Before modeling, I conducted Exploratory Data Analysis including data summary, hypothesis testing and data visualizations. 
+All the 200 variables are numeric and contain no missing values. Besides, Feature Engineering is omitted considering that the variables are anonymous
+
+In the modeling part, the ROC-AUC is chosen as evaluation metrics as required by the Kaggle competition. 
+I implemented three tree-based methods, Adaboost, XGBoost and LightGBM, to predict whether a customer will make a transaction.  
+
+After modeling, I compared the model performance and decided the LightGBM model, which achieves a 0.899 AUC, as the final model.
+
