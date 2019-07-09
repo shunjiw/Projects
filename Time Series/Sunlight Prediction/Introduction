@@ -1,5 +1,13 @@
 The goal of this project is to fit the sunlight data using an appropriate time series model and make predictions for the future.
 
+The data is stored in 5 csv files, each of which is one-year sunlight data.
+There are 18 variables, such as Temperature, Cloud Type and Global Horizontal Irradiance (GHI).
+Each row in the dataset represents a record of one half hour in a specific day. 
+
+I preprocessed the dataset by merging and aggregating the data so that the final dataset contains all five years' information 
+and each row represents a daily record before starting the following analysis.
+
+
 Steps:
 
 1. Conduct the time series data analysis. Explore the trend and seasonality by data visualizations. 
@@ -11,5 +19,5 @@ Steps:
 4. Assess model performance on the test set by MSE and decide the final model.
 
 
-Alternatively, try tree-based Random Forest model to build the predictive model 
-by taking the variables such as temperature and cloud type as the predictors and the GHI value as the response.
+Alternatively, try tree-based Random Forest model to build the predictive model. 
+The variables like Temperature and Cloud Type are treated as the predictors and the GHI value is the response.
