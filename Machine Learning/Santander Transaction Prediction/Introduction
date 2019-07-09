@@ -9,7 +9,8 @@ The test set has 200,000 rows as well and has 201 columns,
 which include the same variables as the training set expect the target.
 
 Before modeling, I conducted Exploratory Data Analysis including data summary, hypothesis testing and data visualizations. 
-All the 200 variables are numeric and contain no missing values. Besides, Feature Engineering is omitted considering that the variables are anonymous
+All the 200 variables are numeric and contain no missing values. 
+Besides, Feature Engineering is omitted considering that the variables are anonymous
 
 In the modeling part, the ROC-AUC is chosen as evaluation metrics as required by the Kaggle competition. 
 I implemented three tree-based methods, Adaboost, XGBoost and LightGBM, to predict whether a customer will make a transaction.  
