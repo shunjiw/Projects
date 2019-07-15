@@ -7,4 +7,9 @@ We obtain the passengers record from https://www.kaggle.com/c/titanic. In the da
 In addition to the passenger number and survival status, there are other ten relative variables, such as Age, Sex and Cabin Number. 
 
 Our task is to figure out who is more likely to survive this tragedy based on their personal information. 
-The logistic regression is carried out to handle this challenge.
+The logistic regression is carried out to handle this challenge in Python and R. 
+
+Note that the project aims to provide a tutorial of using Logistic Regression, so it focuses less on how to make the results accurate.
+
+For more information, you could see the website: https://jbhender.github.io/Stats506/F17/Projects/G15.html
+
