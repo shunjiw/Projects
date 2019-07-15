@@ -1,0 +1,10 @@
+The sinking of RMS Titanic is a huge tragedy, killing 1502 out of 2224 passengers and crew. 
+One of the reasons that the shipwreck led to such loss of life was that there were not enough lifeboats for the passengers and crew.
+Although there was some element of luck involved in surviving the sinking, some groups of people were more likely to survive 
+than others, such as women, children, and the upper-class.
+
+We obtain the passengers record from https://www.kaggle.com/c/titanic. In the dataset, 891 passengers are included in the dataset. 
+In addition to the passenger number and survival status, there are other ten relative variables, such as Age, Sex and Cabin Number. 
+
+Our task is to figure out who is more likely to survive this tragedy based on their personal information. 
+The logistic regression is carried out to handle this challenge.
